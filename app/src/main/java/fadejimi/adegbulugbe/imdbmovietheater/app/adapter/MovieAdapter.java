@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Created by Test on 9/19/2015.
@@ -40,6 +41,9 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         this.movieDataItems = movieDataItems;
     }
 
+    public void setItemList(ArrayList<Movie> itemList) {
+        this.movieDataItems = itemList;
+    }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 

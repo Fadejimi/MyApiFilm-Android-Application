@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,76 +51,51 @@ public class MovieLayoutActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_layout);
 
-        performSearch();
-    }
+        moviesAdapter = new MovieAdapter(this, R.layout.activity_movie_data_row, new ArrayList<Movie>());
 
-    private void performSearch() {
-        progressDialogOld = ProgressDialog.show(MovieLayoutActivity.this, "Please wait...",
-                "Retrieving data...", true, true);
+        setListAdapter(moviesAdapter);
 
-        PerformMovieSearchTask task = new PerformMovieSearchTask();
-        task.execute();
-        progressDialogOld.setOnCancelListener(new CancelTaskOnCancelListener(task));
-    }
+        if (moviesList!=null && !moviesList.isEmpty()) {
 
-    private class CancelTaskOnCancelListener implements DialogInterface.OnCancelListener {
-        private AsyncTask<?, ?, ?> task;
-
-        public CancelTaskOnCancelListener(AsyncTask<?, ?, ?> task) {
-            this.task = task;
-        }
-        @Override
-        public void onCancel(DialogInterface dialogInterface) {
-            if(task != null)
-            {
-                task.cancel(true);
+            moviesAdapter.notifyDataSetChanged();
+            moviesAdapter.clear();
+            for (int i = 0; i < moviesList.size(); i++) {
+                moviesAdapter.add(moviesList.get(i));
             }
         }
+
+        moviesAdapter.notifyDataSetChanged();
+
+        //performSearch();
+        (new PerformMovieSearchTask()).execute();
     }
 
-    private class PerformMovieSearchTask extends AsyncTask<String, Void, List<Movie>> {
+
+    private class PerformMovieSearchTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+        private final ProgressDialog dialog = new ProgressDialog(MovieLayoutActivity.this);
 
         @Override
-        protected List<Movie> doInBackground(String... params) {
+        protected ArrayList<Movie> doInBackground(String... params) {
+            Log.d(getClass().getSimpleName(), String.valueOf(movieSeeker.find()));
             return movieSeeker.find();
+
         }
 
         @Override
-        protected void onPostExecute(final List<Movie> result) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (progressDialog!=null) {
-                        progressDialog.dismiss();
-                        progressDialog = null;
-                        longToast("Error Check your internet connection");
-                    }
-                    if (result!=null) {
-                        /*for (Movie movie : result) {
-                            longToast(movie.title + " - " + movie.rating);
-                        }*/
-                        moviesList = (ArrayList<Movie>) result;
-                        moviesAdapter = new MovieAdapter(MovieLayoutActivity.this, R.layout.activity_movie_data_row,
-                                moviesList);
+        protected void onPostExecute(final ArrayList<Movie> result) {
+            super.onPostExecute(result);
+            dialog.dismiss();
+            moviesAdapter.setItemList(result);
+            moviesAdapter.notifyDataSetChanged();
+        }
 
-                        setListAdapter(moviesAdapter);
-
-                        if (moviesList != null && !moviesList.isEmpty()){
-
-                            moviesAdapter.notifyDataSetChanged();
-                            moviesAdapter.clear();
-                            for(int i = 0; i < moviesList.size(); i++){
-                                moviesAdapter.add(moviesList.get(i));
-                            }
-                        }
-
-                        moviesAdapter.notifyDataSetChanged();
-                    }
-                }
-            });
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.setMessage("Downloading contacts...");
+            dialog.show();
         }
     }
-
     public void longToast(CharSequence message)
     {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();

@@ -14,8 +14,7 @@ public class Movie implements Serializable {
     public String title;
     public String urlPoster;
     public String year;
-    public String date;
-    public ArrayList<Image> imagesList;
+    //public ArrayList<Image> imagesList;
 
     /*public String retrieveThumbnail(){
         if (imagesList != null && imagesList.isEmpty()) {

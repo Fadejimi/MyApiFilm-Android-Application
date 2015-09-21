@@ -26,24 +26,12 @@ public class MovieHandler extends DefaultHandler {
 
         if(localName.equals("movies"))
         {
-            moviesList = new ArrayList<Movie>();
+
+                moviesList = new ArrayList<Movie>();
+
         }
-        else if (localName.equals("movie"))
-        {
+        else if (localName.equals("movie")) {
             movie = new Movie();
-        }
-        else if (localName.equals("images"))
-        {
-            movieImageList = new ArrayList<Image>();
-        }
-        else if (localName.equals("image"))
-        {
-            movieImage = new Image();
-            movieImage.type = accts.getValue("type");
-            movieImage.url = accts.getValue("url");
-            movieImage.size = accts.getValue("size");
-            movieImage.width = Integer.parseInt(accts.getValue("width"));
-            movieImage.height = Integer.parseInt(accts.getValue("height"));
         }
     }
 
@@ -70,12 +58,6 @@ public class MovieHandler extends DefaultHandler {
         }
         else if (localName.equals("year")){
             movie.year = buffer.toString();
-        }
-        else if (localName.equals("image")){
-            movieImageList.add(movieImage);
-        }
-        else if (localName.equals("images")){
-            movie.imagesList = movieImageList;
         }
     }
 
