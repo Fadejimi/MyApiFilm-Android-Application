@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
     private ArrayList<Movie> movieDataItems;
 
-    private Activity context;
+    private Context context;
 
     public MovieAdapter(Activity context, int textViewResourceId, ArrayList<Movie> movieDataItems) {
         super(context, textViewResourceId, movieDataItems);
@@ -41,8 +42,31 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         this.movieDataItems = movieDataItems;
     }
 
+    public int getCount() {
+        if (movieDataItems != null)
+            return movieDataItems.size();
+        return 0;
+    }
+
+    public Movie getItem(int position) {
+        if (movieDataItems != null)
+            return movieDataItems.get(position);
+        return null;
+    }
+
+    public long getItemId(int position) {
+        if (movieDataItems != null)
+            return movieDataItems.get(position).hashCode();
+        return 0;
+    }
+
     public void setItemList(ArrayList<Movie> itemList) {
+        Log.d(getClass().getSimpleName(), String.valueOf(itemList));
         this.movieDataItems = itemList;
+    }
+
+    public ArrayList<Movie> getItemList() {
+        return movieDataItems;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

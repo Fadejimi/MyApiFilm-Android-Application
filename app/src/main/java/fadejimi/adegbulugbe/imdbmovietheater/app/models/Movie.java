@@ -14,6 +14,22 @@ public class Movie implements Serializable {
     public String title;
     public String urlPoster;
     public String year;
+
+    public Movie()
+    {
+
+    }
+
+    public Movie(String id, String plot, String rating, String simple, String title, String url, String y)
+    {
+        this.idIMDB = id;
+        this.plot = plot;
+        this.rating = rating;
+        this.simplePlot = simple;
+        this.title = title;
+        this.urlPoster = url;
+        this.year = y;
+    }
     //public ArrayList<Image> imagesList;
 
     /*public String retrieveThumbnail(){

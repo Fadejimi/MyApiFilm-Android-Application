@@ -63,7 +63,7 @@ public class HttpReciever {
             }
 
             HttpEntity getResponseEntity = getResponse.getEntity();
-            Log.d(getClass().getSimpleName(), String.valueOf(getResponseEntity.getContent()));
+            //Log.d(getClass().getSimpleName(), String.valueOf(getResponseEntity.getContent()));
             return getResponseEntity.getContent();
         }
         catch(IOException e)

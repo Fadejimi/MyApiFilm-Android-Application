@@ -24,8 +24,22 @@ import fadejimi.adegbulugbe.imdbmovietheater.app.adapter.MovieAdapter;
 import fadejimi.adegbulugbe.imdbmovietheater.app.io.FlushedInputStream;
 import fadejimi.adegbulugbe.imdbmovietheater.app.io.Utils;
 import fadejimi.adegbulugbe.imdbmovietheater.app.models.Movie;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,22 +66,13 @@ public class MovieLayoutActivity extends ListActivity {
         setContentView(R.layout.activity_movie_layout);
 
         moviesAdapter = new MovieAdapter(this, R.layout.activity_movie_data_row, new ArrayList<Movie>());
-
+        //ListView lv = (ListView) findViewById(R.id.listView);
         setListAdapter(moviesAdapter);
-
-        if (moviesList!=null && !moviesList.isEmpty()) {
-
-            moviesAdapter.notifyDataSetChanged();
-            moviesAdapter.clear();
-            for (int i = 0; i < moviesList.size(); i++) {
-                moviesAdapter.add(moviesList.get(i));
-            }
-        }
 
         moviesAdapter.notifyDataSetChanged();
 
         //performSearch();
-        (new PerformMovieSearchTask()).execute();
+        (new PerformMovieSearchTask()).execute("http://www.myapifilms.com/imdb/inTheaters?format=JSON&lang=en-us&token=8c277cae-9c14-4d87-9c95-8ad756f42b3c");
     }
 
 
@@ -77,8 +82,60 @@ public class MovieLayoutActivity extends ListActivity {
         @Override
         protected ArrayList<Movie> doInBackground(String... params) {
             Log.d(getClass().getSimpleName(), String.valueOf(movieSeeker.find()));
-            return movieSeeker.find();
+            ArrayList<Movie> result = new ArrayList<Movie>();
+            int responseCode = -1;
+            StringBuilder builder = new StringBuilder();
+            HttpClient client = new DefaultHttpClient();
+            HttpGet httpget = new HttpGet(params[0]);
+            //return movieSeeker.find();
+            try {
+                HttpResponse response = client.execute(httpget);
+                StatusLine statusLine = response.getStatusLine();
+                responseCode = statusLine.getStatusCode();
+                // Read the stream
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    HttpEntity entity = response.getEntity();
+                    InputStream content = entity.getContent();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+                    String line;
+                    while((line = reader.readLine()) != null){
+                        builder.append(line);
+                    }
 
+                    //jsonResponse = new JSONObject(builder.toString());
+                }
+                else {
+                    Log.i(getClass().getSimpleName(), String.format("Unsuccessful HTTP response code: %d", responseCode));
+                }
+
+                JSONArray jsonResult = new JSONArray(builder.toString());
+                JSONObject arr = jsonResult.getJSONObject(1);
+                JSONArray moviesArr = arr.getJSONArray("movies");
+
+                for (int i=0; i < moviesArr.length(); i++) {
+                    //Log.d(getClass().getSimpleName(), String.valueOf(convertMovie(moviesArr.getJSONObject(i))));
+                    JSONObject movieData =  moviesArr.getJSONObject(i);
+                    result.add(convertMovie(movieData));
+                    Log.d(getClass().getSimpleName(), String.valueOf(convertMovie(movieData)));
+                }
+
+                return result;
+            }
+            catch(Throwable t) {
+                t.printStackTrace();
+            }
+            return null;
+        }
+
+        private Movie convertMovie(JSONObject obj) throws JSONException {
+            String idIDMB = obj.getString("idIMDB");
+            String plot = obj.getString("plot");
+            String rating = obj.getString("rating");
+            String simplePlot = obj.getString("simplePlot");
+            String title = obj.getString("title");
+            String urlPoster = obj.getString("urlPoster");
+            String year = obj.getString("year");
+            return new Movie(idIDMB, plot, rating, simplePlot, title, urlPoster, year);
         }
 
         @Override
@@ -92,7 +149,7 @@ public class MovieLayoutActivity extends ListActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog.setMessage("Downloading contacts...");
+            dialog.setMessage("Downloading movies...");
             dialog.show();
         }
     }
