@@ -1,0 +1,77 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="?android:attr/listPreferredItemHeight"
+                android:layout_height="fill_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin">
+
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:id="@+id/movie_thumb_icon"
+            android:layout_marginRight="6dip"/>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="fill_parent">
+
+        <TextView
+                android:id="@+id/name_text_view"
+                android:layout_width="fill_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:textStyle="bold"
+                />
+
+        <TextView
+                android:id="@+id/rating_text_view"
+                android:layout_width="fill_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                />
+
+        <TextView
+                android:id="@+id/released_text_view"
+                android:layout_width="fill_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                />
+
+        <TextView
+                android:id="@+id/plot_text_view"
+                android:layout_width="fill_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                />
+
+        <TextView
+                android:id="@+id/adult_text_view"
+                android:layout_width="fill_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                />
+
+        <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="fill_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                />
+    </LinearLayout>
+</LinearLayout>
